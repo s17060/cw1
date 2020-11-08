@@ -13,16 +13,22 @@ namespace Cw1
             string url = Console.ReadLine();
 
             var httpClient = new HttpClient();
-            string responseBody = await httpClient.GetStringAsync(url);
+            var response = await httpClient.GetAsync(url);
 
-            Regex emailRegex = new Regex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*",
-            RegexOptions.IgnoreCase);
-            MatchCollection emailMatches = emailRegex.Matches(responseBody);
-
-            foreach(Match m in emailMatches)
+            if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine(m);
+                var html = await response.Content.ReadAsStringAsync();
+                Regex emailRegex = new Regex("[a-x0-9]+@[a-z.]+",
+                RegexOptions.IgnoreCase);
+                MatchCollection emailMatches = emailRegex.Matches(html);
+
+                foreach (Match m in emailMatches)
+                {
+                    Console.WriteLine(m);
+                }
             }
+
+            
         }
     }
 }
